@@ -1,9 +1,12 @@
 import psycopg2
+import getpass
 
+user = input("iniciando conexão\nInsira Usuário:")
+password = getpass.getpass(prompt="Senha (você não é capaz de ver sua senha enquanto digita):")
 conn = psycopg2.connect(database="labbd",
                         host="atomheartfoxer.gay",
-                        user="a13688162",
-                        password="a13688162",
+                        user=user,
+                        password=password,
                         port="5432")
 
 cursor = conn.cursor()
