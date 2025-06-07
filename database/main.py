@@ -1,6 +1,6 @@
 import psycopg2
 import getpass
-
+import django
 user = input("iniciando conexão\nInsira Usuário:")
 password = getpass.getpass(prompt="Senha (você não é capaz de ver sua senha enquanto digita):")
 conn = psycopg2.connect(database="labbd",
