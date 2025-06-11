@@ -34,6 +34,7 @@ def validate_input(input_string, input_type="general"):
         if not re.match(r'^[a-zA-ZÀ-ÿ\s\-\'\.]+$', input_string):
             raise ValueError("Nome contém caracteres inválidos")
     elif input_type == "date":
+        print("OI")
         # Valida formato de data YYYY-MM-DD
         if not re.match(r'^\d{4}-\d{2}-\d{2}$', input_string):
             raise ValueError("Data deve estar no formato YYYY-MM-DD")
@@ -949,7 +950,6 @@ def show_driver_details(driver_id):
     finally:
         conn.close()
 
-# Função para importar pilotos de arquivo CSV
 def import_drivers_from_file():
     file_path = input("Caminho do arquivo CSV: ")
 
@@ -959,9 +959,10 @@ def import_drivers_from_file():
 
     try:
         with open(file_path, 'r') as f:
-            reader = csv.DictReader(f)
+            reader = csv.DictReader(f, skipinitialspace=True)
             drivers = list(reader)
-
+            print(f"Dados lidos: {drivers}")
+                    
         conn = connect_db()
         if not conn:
             return
@@ -969,6 +970,9 @@ def import_drivers_from_file():
         try:
             with conn.cursor() as cursor:
                 for driver in drivers:
+                    # Strip whitespace from values
+                    driver = {k: v.strip() if v else None for k, v in driver.items()}
+                    
                     # Verifica se piloto já existe
                     cursor.execute("""
                         SELECT DriverId 
@@ -979,40 +983,49 @@ def import_drivers_from_file():
                     if cursor.fetchone():
                         print(f"Piloto {driver['forename']} {driver['surname']} já existe. Pulando...")
                         continue
+                    
+                    # Busca próximo ID - CORREÇÃO AQUI
+                    cursor.execute('SELECT COALESCE(MAX("driverid"), 0) + 1 FROM "LabBD25-Grupo7".Drivers')
+                    next_id = cursor.fetchone()[0]
 
-                    # Insere novo piloto
+                    # Insere novo piloto - REMOVIDO O RETURNING
                     cursor.execute("""
                         INSERT INTO "LabBD25-Grupo7".Drivers 
-                        (DriverRef, Number, Code, Forename, Surname, DateOfBirth, Nationality)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s)
-                        RETURNING DriverId
+                        (DriverID, DriverRef, Number, Code, Forename, Surname, DateOfBirth, Nationality)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                     """, (
+                        next_id,
                         driver['driverref'],
                         driver.get('number'),
                         driver['code'],
                         driver['forename'],
                         driver['surname'],
-                        driver['dob'],
+                        driver['dateofbirth'],
                         driver['nationality']
                     ))
-                    driver_id = cursor.fetchone()[0]
 
-                    # Cria usuário associado
+                    # Cria usuário associado - CORREÇÃO AQUI
                     username = f"{driver['driverref']}_d"
                     cursor.execute("""
+                        SET search_path TO "LabBD25-Grupo7";
                         INSERT INTO "LabBD25-Grupo7".UserAccounts 
                         (Username, PasswordHash, UserType, DriverID)
-                        VALUES (%s, crypt(%s, gen_salt('bf')), 'driver', %s)
-                    """, (username, driver['driverref'], driver_id))
+                        VALUES (%s, crypt(%s, gen_salt('bf')), %s, %s)
+                    """, (username, driver['driverref'], 'driver', next_id))
 
                 conn.commit()
                 print(f"{len(drivers)} pilotos importados com sucesso!")
 
+        except Exception as e:
+            conn.rollback()
+            print(f"Erro ao importar dados: {e}")
+            import traceback
+            traceback.print_exc()
         finally:
             conn.close()
 
     except Exception as e:
-        print(f"Erro ao importar arquivo: {e}")
+        print(f"Erro ao processar arquivo: {e}")
 
 # Função para gerar relatórios administrativos
 def generate_admin_reports():
