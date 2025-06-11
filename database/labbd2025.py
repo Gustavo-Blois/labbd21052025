@@ -1066,7 +1066,7 @@ def top_drivers_wins_report():
             print(tabulate(results, headers=["Piloto", "Nacionalidade", "Vitórias", "Total Pontos"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open('top_drivers_wins.csv', 'w', newline='') as f:
+            with open('relatorios/top_drivers_wins.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["Piloto", "Nacionalidade", "Vitórias", "Total Pontos"])
                 writer.writerows(results)
@@ -1106,7 +1106,7 @@ def top_constructors_points_report():
             print(tabulate(results, headers=["Escuderia", "Nacionalidade", "Pontos", "Vitórias", "Anos"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open('top_constructors_points.csv', 'w', newline='') as f:
+            with open('relatorios/top_constructors_points.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["Escuderia", "Nacionalidade", "Pontos", "Vitórias", "Anos"])
                 writer.writerows(results)
@@ -1145,7 +1145,7 @@ def season_statistics_report():
             print(tabulate(results, headers=["Ano", "Corridas", "Pilotos", "Escuderias", "Média Pts"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open('season_statistics.csv', 'w', newline='') as f:
+            with open('relatorios/season_statistics.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["Ano", "Corridas", "Pilotos", "Escuderias", "Média Pontos"])
                 writer.writerows(results)
@@ -1205,7 +1205,7 @@ def nationality_analysis_report():
             print(tabulate(constructor_results, headers=["Nacionalidade", "Escuderias", "Vitórias", "Pontos"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open('nationality_analysis.csv', 'w', newline='') as f:
+            with open('relatorios/nationality_analysis.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["=== PILOTOS ==="])
                 writer.writerow(["Nacionalidade", "Pilotos", "Vitórias", "Pontos"])
@@ -1250,7 +1250,7 @@ def user_activity_report():
             print(tabulate(results, headers=["Usuário", "Tipo", "Nome", "Logins", "Último Login"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open('user_activity.csv', 'w', newline='') as f:
+            with open('relatorios/user_activity.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["Usuário", "Tipo", "Nome", "Logins", "Último Login"])
                 writer.writerows(results)
@@ -1319,7 +1319,7 @@ def constructor_yearly_results(constructor_id):
             print(tabulate(formatted_results, headers=["Ano", "Corridas", "Pontos", "Vitórias", "Pódios", "Pos. Média"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open(f'constructor_{constructor_id}_yearly.csv', 'w', newline='') as f:
+            with open(f'relatorios/constructor_{constructor_id}_yearly.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["Ano", "Corridas", "Pontos", "Vitórias", "Pódios", "Posição Média"])
                 writer.writerows(results)
@@ -1369,7 +1369,7 @@ def constructor_drivers_performance(constructor_id):
             print(tabulate(formatted_results, headers=["Piloto", "Corridas", "Pontos", "Vitórias", "Pódios", "Pos. Média", "1º Ano", "Último"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open(f'constructor_{constructor_id}_drivers.csv', 'w', newline='') as f:
+            with open(f'relatorios/constructor_{constructor_id}_drivers.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["Piloto", "Corridas", "Pontos", "Vitórias", "Pódios", "Posição Média", "Primeiro Ano", "Último Ano"])
                 writer.writerows(results)
@@ -1394,7 +1394,7 @@ def constructor_comparison(constructor_id, constructor_name):
                        COUNT(CASE WHEN R.Position = 1 THEN 1 END) AS vitorias,
                        COUNT(CASE WHEN R.Position <= 3 THEN 1 END) AS podios,
                        COUNT(DISTINCT R.RaceId) AS corridas,
-                       ROUND(AVG(CAST(R.Position AS FLOAT)), 2) AS posicao_media
+                       ROUND(CAST(AVG(R.Position) AS NUMERIC),2) AS posicao_media
                 FROM "LabBD25-Grupo7".Results R
                 JOIN "LabBD25-Grupo7".Constructors C ON R.ConstructorId = C.ConstructorId
                 WHERE R.Position IS NOT NULL
@@ -1420,7 +1420,7 @@ def constructor_comparison(constructor_id, constructor_name):
             print(tabulate(highlighted_results, headers=["Escuderia", "Pontos", "Vitórias", "Pódios", "Corridas", "Pos. Média"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open(f'constructor_{constructor_id}_comparison.csv', 'w', newline='') as f:
+            with open(f'relatorios/constructor_{constructor_id}_comparison.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["Escuderia", "Pontos", "Vitórias", "Pódios", "Corridas", "Posição Média"])
                 writer.writerows(results)
@@ -1469,7 +1469,7 @@ def constructor_circuits_analysis(constructor_id):
             print(tabulate(formatted_results, headers=["Circuito", "País", "Corridas", "Pontos", "Vitórias", "Pos. Média"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open(f'constructor_{constructor_id}_circuits.csv', 'w', newline='') as f:
+            with open(f'relatorios/constructor_{constructor_id}_circuits.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["Circuito", "País", "Corridas", "Pontos", "Vitórias", "Posição Média"])
                 writer.writerows(results)
@@ -1543,7 +1543,7 @@ def driver_yearly_results(driver_id):
             print(tabulate(formatted_results, headers=["Ano", "Corridas", "Pontos", "Vitórias", "Pódios", "Pos. Média", "Escuderia"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open(f'driver_{driver_id}_yearly.csv', 'w', newline='') as f:
+            with open(f'relatorios/driver_{driver_id}_yearly.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["Ano", "Corridas", "Pontos", "Vitórias", "Pódios", "Posição Média", "Escuderia"])
                 writer.writerows(results)
@@ -1593,7 +1593,7 @@ def driver_constructor_performance(driver_id):
             print(tabulate(formatted_results, headers=["Escuderia", "Corridas", "Pontos", "Vitórias", "Pódios", "Pos. Média", "1º Ano", "Último"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open(f'driver_{driver_id}_constructors.csv', 'w', newline='') as f:
+            with open(f'relatorios/driver_{driver_id}_constructors.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["Escuderia", "Corridas", "Pontos", "Vitórias", "Pódios", "Posição Média", "Primeiro Ano", "Último Ano"])
                 writer.writerows(results)
@@ -1642,7 +1642,7 @@ def driver_circuits_analysis(driver_id):
             print(tabulate(formatted_results, headers=["Circuito", "País", "Corridas", "Pontos", "Vitórias", "Pos. Média"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open(f'driver_{driver_id}_circuits.csv', 'w', newline='') as f:
+            with open(f'relatorios/driver_{driver_id}_circuits.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["Circuito", "País", "Corridas", "Pontos", "Vitórias", "Posição Média"])
                 writer.writerows(results)
@@ -1693,7 +1693,7 @@ def driver_comparison(driver_id, driver_name):
             print(tabulate(highlighted_results, headers=["Piloto", "Pontos", "Vitórias", "Pódios", "Corridas", "Pos. Média"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open(f'driver_{driver_id}_comparison.csv', 'w', newline='') as f:
+            with open(f'relatorios/driver_{driver_id}_comparison.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["Piloto", "Pontos", "Vitórias", "Pódios", "Corridas", "Posição Média"])
                 writer.writerows(results)
@@ -1754,7 +1754,7 @@ def driver_lap_times(driver_id):
             print(tabulate(formatted_results, headers=["Corrida", "Ano", "Voltas", "Melhor Volta", "Tempo Médio"], tablefmt="pretty"))
             
             # Salvar em CSV
-            with open(f'driver_{driver_id}_laptimes.csv', 'w', newline='') as f:
+            with open(f'relatorios/driver_{driver_id}_laptimes.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(["Corrida", "Ano", "Voltas", "Melhor Volta (ms)", "Tempo Médio (ms)"])
                 writer.writerows(results)
